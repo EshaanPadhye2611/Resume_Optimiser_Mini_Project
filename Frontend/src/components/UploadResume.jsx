@@ -11,12 +11,11 @@ import {
 } from 'react-icons/fa';
 import { ImSpinner8 } from 'react-icons/im';
 
-// Function to format text by converting **text** into <b>text</b> and removing all * characters
 const formatText = (text) => {
-  if (!text) return ''; // Handle null or undefined text
+  if (!text) return '';
   return text
-    .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>") // Convert **text** to <b>text</b>
-    .replace(/\*/g, ""); // Remove any remaining * characters
+    .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+    .replace(/\*/g, "");
 };
 
 const UploadResume = () => {
@@ -137,13 +136,26 @@ const UploadResume = () => {
               {view === 'feedback' && (
                 <>
                   <h3 className="text-xl font-bold text-indigo-700 flex items-center gap-2">
-                    <FaCheckCircle className="text-green-500" /> AI Feedback
+                    <FaCheckCircle className="text-green-500" /> ATS Score
                   </h3>
-                  <p><strong>Match Score:</strong> <span className="text-indigo-600">{feedback.match_score}%</span></p>
-                  <p><strong>Final Score:</strong> <span className="text-indigo-600">{feedback.final_score}</span></p>
+
+                  {/* ATS Progress Bar */}
+                  <div className="w-full">
+                    <div className="text-sm font-medium text-gray-600 mb-1">Your resume's ATS compatibility</div>
+                    <div className="w-full bg-indigo-100 rounded-full h-5 overflow-hidden mb-2">
+                      <div
+                        className="h-full bg-indigo-600 text-white text-xs flex items-center justify-center font-bold transition-all duration-500"
+                        style={{ width: `${feedback.ats_score || 0}%` }}
+                      >
+                        {feedback.ats_score || 0}%
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* AI Feedback */}
                   <div
                     className="text-gray-700 text-sm whitespace-pre-line"
-                    dangerouslySetInnerHTML={{ __html: formatText(feedback.ai_feedback) }} // Apply formatting
+                    dangerouslySetInnerHTML={{ __html: formatText(feedback.ai_feedback) }}
                   ></div>
                 </>
               )}
@@ -155,7 +167,7 @@ const UploadResume = () => {
                   </h3>
                   <div
                     className="text-gray-700 text-sm whitespace-pre-line"
-                    dangerouslySetInnerHTML={{ __html: formatText(feedback.proofreading) }} // Apply formatting
+                    dangerouslySetInnerHTML={{ __html: formatText(feedback.proofreading) }}
                   ></div>
                 </>
               )}
@@ -167,7 +179,7 @@ const UploadResume = () => {
                   </h3>
                   <div
                     className="text-gray-700 text-sm whitespace-pre-line"
-                    dangerouslySetInnerHTML={{ __html: formatText(feedback.cover_letter) }} // Apply formatting
+                    dangerouslySetInnerHTML={{ __html: formatText(feedback.cover_letter) }}
                   ></div>
                 </>
               )}
@@ -201,6 +213,7 @@ const UploadResume = () => {
           </div>
         )}
       </div>
+
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );

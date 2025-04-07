@@ -1,4 +1,3 @@
-# backend/main.py
 import os
 import shutil
 import fitz  # PyMuPDF
@@ -6,6 +5,8 @@ import docx
 import re
 import nltk
 import time
+import joblib
+import PyPDF2
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -18,13 +19,17 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import google.generativeai as genai
 
+# Downloads for NLTK
 nltk.download("wordnet")
 
-# Configure Gemini API key
-genai.configure(api_key="AIzaSyCxDSKRqXPxYBtVkZf4vM8wsCBaIRgcfGE")
+# Load Gemini API key
+genai.configure(api_key="AIzaSyCxDSKRqXPxYBtVkZf4vM8wsCBaIRgcfGE")  # Replace with your actual API key
+
+# Load model and vectorizer
+model = joblib.load("resume_classifier_model.joblib")
+tfidf = joblib.load("tfidf_vectorizer.joblib")
 
 app = FastAPI()
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -39,6 +44,8 @@ SECTION_HEADERS = {
     "technical_skills": ["skills", "technical skills", "tech stack", "programming skills"],
     "achievements": ["achievements", "awards", "recognition", "honors"]
 }
+
+# ----------- Resume Utilities -----------
 
 def extract_text_from_pdf(pdf_path):
     text = ""
@@ -76,11 +83,24 @@ def extract_details(text):
     data["introduction"] = " ".join(sentences[:3])
     return data
 
+def clean_resume(text):
+    text = re.sub(r'\b\w{1,2}\b', '', text)
+    text = re.sub(r'[^a-zA-Z]', ' ', text)
+    return text.lower()
+
 def calculate_similarity(resume_texts, job_desc):
     corpus = [job_desc] + resume_texts
     vectorizer = TfidfVectorizer(stop_words="english")
-    tfidf = vectorizer.fit_transform(corpus)
-    return cosine_similarity(tfidf[0:1], tfidf[1:])[0]
+    tfidf_matrix = vectorizer.fit_transform(corpus)
+    return cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:])[0]
+
+def calculate_ats_score(job_description, resume_text):
+    job_keywords = set(re.findall(r'\b\w+\b', job_description.lower()))
+    resume_keywords = set(re.findall(r'\b\w+\b', resume_text.lower()))
+    matched_keywords = job_keywords.intersection(resume_keywords)
+    if len(job_keywords) == 0:
+        return 0.0
+    return len(matched_keywords) / len(job_keywords) * 100
 
 def prompt_ai(prompt):
     try:
@@ -88,6 +108,8 @@ def prompt_ai(prompt):
         return model.generate_content(prompt).text
     except Exception as e:
         return f"AI Error: {str(e)}"
+
+# ----------- LinkedIn Job Fetch -----------
 
 def get_jobs_from_linkedin_multiple_queries(queries, location="Remote"):
     options = Options()
@@ -102,7 +124,6 @@ def get_jobs_from_linkedin_multiple_queries(queries, location="Remote"):
             search_url = f"https://www.linkedin.com/jobs/search/?keywords={query.replace(' ', '%20')}&location={location}"
             driver.get(search_url)
             time.sleep(5)
-
             job_elements = driver.find_elements(By.CLASS_NAME, "base-card")
             for job in job_elements[:5]:
                 try:
@@ -114,11 +135,12 @@ def get_jobs_from_linkedin_multiple_queries(queries, location="Remote"):
                     continue
             if job_list:
                 break
-        except Exception as e:
+        except Exception:
             continue
-
     driver.quit()
     return job_list if job_list else [{"title": "No jobs found", "company": "", "location": ""}]
+
+# ----------- API Endpoint -----------
 
 @app.post("/analyze")
 async def analyze_resume(file: UploadFile = File(...), job_description: str = Form(...)):
@@ -128,8 +150,14 @@ async def analyze_resume(file: UploadFile = File(...), job_description: str = Fo
         shutil.copyfileobj(file.file, buffer)
 
     resume_text = extract_text(path)
+    cleaned_resume = clean_resume(resume_text)
+    vectorized_resume = tfidf.transform([cleaned_resume])
+    prediction = model.predict(vectorized_resume)[0]
+    ats_score = calculate_ats_score(job_description, cleaned_resume)
     details = extract_details(resume_text)
     similarity = calculate_similarity([resume_text], job_description)[0]
+
+    print(f"\n📊 ATS Score for {file.filename}: {round(ats_score, 2)}%\n")
 
     skills = details.get("technical_skills", [])
     keywords_for_jobs = skills if skills else ["Web Developer"]
@@ -139,6 +167,8 @@ async def analyze_resume(file: UploadFile = File(...), job_description: str = Fo
 
     details.update({
         "resume_file": file.filename,
+        "category": prediction,
+        "ats_score": round(ats_score, 2),
         "match_score": round(similarity * 100, 2),
         "final_score": round(len(details["experience"]) * 0.4 + len(details["technical_skills"]) * 0.3 + len(details["projects"]) * 0.2 + 0.1, 2),
         "cover_letter": prompt_ai(f"Write a cover letter based on the following:\n{combined_prompt}"),
