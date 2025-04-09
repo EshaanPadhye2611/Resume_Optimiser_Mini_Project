@@ -77,6 +77,12 @@ const UploadResume = () => {
                 <FaSignOutAlt /> Logout
               </button>
             )}
+            <button
+    onClick={() => navigate('/interview')}
+    className="px-4 py-2 rounded-lg font-semibold bg-purple-600 text-white hover:bg-purple-700 transition"
+  >
+    Mock Interview
+  </button>
           </div>
         </div>
       </header>
@@ -130,6 +136,8 @@ const UploadResume = () => {
                   {type.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}
                 </button>
               ))}
+
+
             </div>
 
             <div className="bg-white shadow-md rounded-lg p-6 space-y-4" data-aos="fade-up">

@@ -23,7 +23,7 @@ import google.generativeai as genai
 nltk.download("wordnet")
 
 # Load Gemini API key
-genai.configure(api_key="AIzaSyCxDSKRqXPxYBtVkZf4vM8wsCBaIRgcfGE")  # Replace with your actual API key
+genai.configure(api_key="AIzaSyDrM83L7WFPvgtGUB6UmVPAsurYfCTt2jw")  # Replace with your actual API key
 
 # Load model and vectorizer
 model = joblib.load("resume_classifier_model.joblib")
