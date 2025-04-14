@@ -29,6 +29,7 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 
+
 # Load model and vectorizer
 model = joblib.load("resume_classifier_model.joblib")
 tfidf = joblib.load("tfidf_vectorizer.joblib")
@@ -48,7 +49,13 @@ SECTION_HEADERS = {
     "technical_skills": ["skills", "technical skills", "tech stack", "programming skills"],
     "achievements": ["achievements", "awards", "recognition", "honors"]
 }
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the main Python backend!"}
 
+@app.get("/hello")
+def say_hello():
+    return {"message": "Hello from main.py!"}
 # ----------- Resume Utilities -----------
 
 def extract_text_from_pdf(pdf_path):

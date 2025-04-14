@@ -20,6 +20,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the interview Python backend!"}
+
+@app.post("/generate_question")
+def generate_question():
+    return {"question": "What are your strengths and weaknesses?"}
 
 used_questions = set()
 

@@ -54,9 +54,12 @@ const Interview = () => {
 
   const fetchGeminiQuestion = async () => {
     try {
-      const res = await axios.post('http://localhost:8001/interview_question', {
-        resume_context: localStorage.getItem('resume_text') || '',
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/interview_question`, // Use the environment variable
+        {
+          resume_context: localStorage.getItem('resume_text') || '',
+        }
+      );
       setQuestion(res.data.question);
     } catch (err) {
       console.error('Question fetch error:', err.message);
@@ -90,13 +93,11 @@ const Interview = () => {
     setLoading(true);
     setFeedback(null);
     try {
-      // We expect HTML from the server, so set responseType to 'text'
       const res = await axios.post(
-        'http://localhost:8001/evaluate_answer',
+        `${import.meta.env.VITE_BASE_URL}/evaluate_answer`, // Use the environment variable
         { question, answer },
         { responseType: 'text' }
       );
-      // The entire response is HTML
       setFeedback(res.data);
     } catch (err) {
       console.error('Evaluation error', err);

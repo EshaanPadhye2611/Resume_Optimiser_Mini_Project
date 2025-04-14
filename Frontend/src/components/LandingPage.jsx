@@ -25,8 +25,8 @@ const LandingPage = () => {
   useEffect(() => {
     AOS.init({ duration: 1000 });
   }, []);
-const navigate = useNavigate();
 
+  const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [showInfo, setShowInfo] = useState(false);
@@ -40,18 +40,18 @@ const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     const endpoint = isLogin ? "/api/auth/login" : "/api/auth/signup";
-  
+
     try {
-      const response = await axios.post(endpoint, formData);
-      console.log(response); // Debugging
-  
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}${endpoint}`,
+        formData
+      );
+      console.log(response);
+
       if (isLogin) {
         const { token, user } = response.data;
-  
-        // Store token and user name
         localStorage.setItem('token', token);
         localStorage.setItem('username', user?.name || '');
-  
         toast.success('Login successful!');
         setShowPopup(false);
         setError('');
@@ -61,24 +61,22 @@ const navigate = useNavigate();
         setIsLogin(true);
         setFormData({ name: '', email: '', password: '' });
       }
-  
     } catch (err) {
       const msg = err.response?.data?.message || 'Something went wrong';
       setError(msg);
       toast.error(msg);
     }
   };
-  
-  
+
   return (
     <div className="bg-gradient-to-br from-indigo-100 to-violet-200 text-gray-800 font-sans relative overflow-hidden">
       {/* Header */}
       <header className="bg-gradient-to-r from-purple-700 to-indigo-600 text-white py-6 shadow-md">
-        <div className="container mx-auto flex justify-between items-center px-6">
-          <h1 className="text-3xl font-bold flex items-center gap-2 ml-4">
+        <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center px-6">
+          <h1 className="text-3xl sm:text-4xl font-bold flex items-center gap-2 ml-4">
             <FaRocket className="text-white" /> Resume Optimiser
           </h1>
-          <nav className="space-x-6">
+          <nav className="mt-4 sm:mt-0 space-x-6">
             <a href="#features" className="hover:underline">Features</a>
             <a href="#about" className="hover:underline">About</a>
             <a href="#contact" className="hover:underline">Contact</a>
@@ -88,20 +86,24 @@ const navigate = useNavigate();
 
       {/* Hero Section */}
       <section className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4">
-        <h2 data-aos="fade-up" className="text-5xl font-bold text-indigo-700 mb-4">
+        <h2 data-aos="fade-up" className="text-3xl sm:text-5xl font-bold text-indigo-700 mb-4">
           Optimize Your Resume Instantly
         </h2>
-        <p data-aos="fade-up" data-aos-delay="200" className="text-lg text-gray-600 max-w-xl">
+        <p
+          data-aos="fade-up"
+          data-aos-delay="200"
+          className="text-base sm:text-lg text-gray-600 max-w-xl"
+        >
           Leverage AI to enhance your resume, beat applicant tracking systems, and land your dream job faster.
         </p>
         <img
           src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
           alt="Resume"
-          className="w-72 mt-10"
+          className="w-48 sm:w-72 mt-10"
           data-aos="zoom-in"
           data-aos-delay="400"
         />
-        <div className="mt-8 flex gap-4">
+        <div className="mt-8 flex flex-col sm:flex-row gap-4">
           <button
             onClick={() => setShowPopup(true)}
             className="px-6 py-3 bg-indigo-700 text-white font-semibold rounded-xl hover:bg-indigo-800 transition"
@@ -118,9 +120,9 @@ const navigate = useNavigate();
       </section>
 
       {/* Features */}
-      <section id="features" className="py-20 px-6" >
+      <section id="features" className="py-20 px-6">
         <h3 className="text-3xl font-bold text-center text-indigo-700 mb-12">Features</h3>
-        <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
           <div className="p-6 border rounded-xl shadow hover:shadow-lg transition" data-aos="flip-left">
             <FaRobot className="text-indigo-600 text-4xl mx-auto mb-4" />
             <h4 className="text-xl font-semibold text-center">AI Resume Feedback</h4>
@@ -143,7 +145,7 @@ const navigate = useNavigate();
       <section id="about" className="py-20 px-6 bg-indigo-50">
         <div className="max-w-4xl mx-auto text-center" data-aos="fade-in">
           <h3 className="text-3xl font-bold text-indigo-700 mb-6">About Us</h3>
-          <p className="text-gray-700 text-lg">
+          <p className="text-gray-700 text-base sm:text-lg">
             Resume Optimiser is built to help job seekers craft the perfect resume using the power of AI.
             Whether you're a student, professional, or career switcher — our platform is tailored to guide and
             enhance your resume journey.
@@ -185,68 +187,62 @@ const navigate = useNavigate();
               {isLogin ? 'Login to Your Account' : 'Create a New Account'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-  {!isLogin && (
-    <div className="relative">
-      <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-      <input
-        type="text"
-        name="name"
-        placeholder="Full Name"
-        value={formData.name}
-        onChange={handleInputChange}
-        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400"
-      />
-    </div>
-  )}
-
-  <div className="relative">
-    <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-    <input
-      type="email"
-      name="email"
-      placeholder="Email"
-      value={formData.email}
-      onChange={handleInputChange}
-      className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400"
-    />
-  </div>
-
-  <div className="relative">
-    <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-    <input
-      type="password"
-      name="password"
-      placeholder="Password"
-      value={formData.password}
-      onChange={handleInputChange}
-      className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400"
-    />
-  </div>
-
-  {error && <p className="text-red-500 text-sm">{error}</p>}
-
-  <button
-    type="submit"
-    className="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2"
-  >
-    {isLogin ? <FaLock /> : <FaUser />} {isLogin ? 'Login' : 'Sign Up'}
-  </button>
-
-  <p className="text-sm text-center text-gray-600">
-    {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
-    <button
-      type="button"
-      className="text-indigo-600 hover:underline font-medium"
-      onClick={() => setIsLogin(!isLogin)}
-    >
-      {isLogin ? 'Sign Up' : 'Login'}
-    </button>
-  </p>
-</form>
+              {!isLogin && (
+                <div className="relative">
+                  <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Full Name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400"
+                  />
+                </div>
+              )}
+              <div className="relative">
+                <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400"
+                />
+              </div>
+              <div className="relative">
+                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400"
+                />
+              </div>
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+              <button
+                type="submit"
+                className="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2"
+              >
+                {isLogin ? <FaLock /> : <FaUser />} {isLogin ? 'Login' : 'Sign Up'}
+              </button>
+              <p className="text-sm text-center text-gray-600">
+                {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
+                <button
+                  type="button"
+                  className="text-indigo-600 hover:underline font-medium"
+                  onClick={() => setIsLogin(!isLogin)}
+                >
+                  {isLogin ? 'Sign Up' : 'Login'}
+                </button>
+              </p>
+            </form>
           </div>
         </div>
       )}
-    
 
       {/* Learn More Info Popup */}
       {showInfo && (
@@ -294,7 +290,6 @@ const navigate = useNavigate();
         </div>
       )}
       <ToastContainer position="top-right" autoClose={3000} />
-
     </div>
   );
 };

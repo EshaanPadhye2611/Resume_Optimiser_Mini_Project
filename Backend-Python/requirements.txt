@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+pymongo
+google-generativeai
+joblib
+python-dotenv
+pandas
+selenium
+webdriver-manager
+fuzzywuzzy
+nltk
+PyPDF2
+python-docx
+scikit-learn
