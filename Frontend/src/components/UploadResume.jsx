@@ -46,7 +46,7 @@ const UploadResume = () => {
       setFeedback(null);
       try {
         const res = await axios.post(
-          `${import.meta.env.VITE_BASE_URL}/analyze`,
+          `${import.meta.env.VITE_MAIN_BACKEND_URL}/analyze`,
           formData
         );
         setFeedback(res.data);

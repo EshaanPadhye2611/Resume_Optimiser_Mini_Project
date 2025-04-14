@@ -55,7 +55,7 @@ const Interview = () => {
   const fetchGeminiQuestion = async () => {
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/interview_question`, // Use the environment variable
+        `${import.meta.env.VITE_INTERVIEW_BACKEND_URL}/interview_question`, // Use the environment variable for the interview backend
         {
           resume_context: localStorage.getItem('resume_text') || '',
         }
@@ -66,7 +66,6 @@ const Interview = () => {
       setQuestion('Describe a challenging project you’ve worked on.');
     }
   };
-
   const speak = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
     window.speechSynthesis.speak(utterance);
@@ -94,7 +93,7 @@ const Interview = () => {
     setFeedback(null);
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/evaluate_answer`, // Use the environment variable
+        `${import.meta.env.VITE_INTERVIEW_BACKEND_URL}/evaluate_answer`, // Use the environment variable for the interview backend
         { question, answer },
         { responseType: 'text' }
       );
