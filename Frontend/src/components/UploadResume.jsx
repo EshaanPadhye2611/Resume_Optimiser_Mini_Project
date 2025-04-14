@@ -209,34 +209,7 @@ const UploadResume = () => {
                 </>
               )}
 
-              {view === 'jobs' && (
-                <>
-                  <h3 className="text-xl font-bold text-indigo-700 flex items-center gap-2">
-                    <FaLink className="text-indigo-500" /> Matching Jobs on LinkedIn
-                  </h3>
-                  <ul className="list-disc pl-6 mt-2 text-gray-700 text-sm">
-                    {feedback.linkedin_jobs?.length > 0 &&
-                    feedback.linkedin_jobs[0].title !== "No jobs found" ? (
-                      feedback.linkedin_jobs.map((job, index) => (
-                        <li key={index} className="mb-2">
-                          <a
-                            href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(
-                              job.title
-                            )}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-indigo-600 hover:underline"
-                          >
-                            {job.title} at {job.company} ({job.location})
-                          </a>
-                        </li>
-                      ))
-                    ) : (
-                      <p className="text-gray-600">No jobs found. Try refining your skills or keywords.</p>
-                    )}
-                  </ul>
-                </>
-              )}
+            
             </div>
           </div>
         )}
