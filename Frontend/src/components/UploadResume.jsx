@@ -7,11 +7,10 @@ import 'aos/dist/aos.css';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   FaUpload, FaFilePdf, FaCheckCircle,
-  FaUserCircle, FaSignOutAlt, FaRocket, FaEnvelopeOpenText, FaLink
+  FaUserCircle, FaSignOutAlt, FaRocket, FaEnvelopeOpenText
 } from 'react-icons/fa';
 import { ImSpinner8 } from 'react-icons/im';
 
-// Utility to format text: Convert **bold** syntax to <b> tags
 const formatText = (text) => {
   if (!text) return '';
   return text
@@ -70,13 +69,15 @@ const UploadResume = () => {
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-violet-200 text-gray-800">
       {/* Header */}
       <header className="bg-indigo-600 text-white py-4 shadow-md">
-        <div className="container mx-auto flex flex-col sm:flex-row items-center px-6">
+        <div className="container mx-auto flex flex-col sm:flex-row items-center px-4 gap-4 justify-between">
           <div className="flex items-center gap-2 text-2xl font-bold">
             <FaRocket /> Resume Optimiser
           </div>
-          <div className="mt-2 sm:mt-0 ml-auto flex items-center gap-4">
-            <FaUserCircle className="text-2xl" />
-            <span className="font-medium">{username || 'Guest'}</span>
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-2">
+              <FaUserCircle className="text-xl" />
+              <span className="font-medium text-center sm:text-left whitespace-nowrap">{username || 'Guest'}</span>
+            </div>
             {username && (
               <button
                 onClick={handleLogout}
@@ -87,7 +88,7 @@ const UploadResume = () => {
             )}
             <button
               onClick={() => navigate('/interview')}
-              className="px-4 py-2 rounded-lg font-semibold bg-purple-600 text-white hover:bg-purple-700 transition"
+              className="px-4 py-2 rounded-lg font-semibold bg-purple-600 text-white hover:bg-purple-700 transition whitespace-nowrap"
             >
               Mock Interview
             </button>
@@ -103,7 +104,6 @@ const UploadResume = () => {
           Upload a resume (PDF or DOCX) and receive AI feedback tailored to your target job.
         </p>
 
-        {/* Job description input */}
         <textarea
           className="border-2 border-indigo-400 rounded-lg p-4 w-full max-w-xl mb-6"
           rows="4"
@@ -112,7 +112,6 @@ const UploadResume = () => {
           onChange={(e) => setJobDescription(e.target.value)}
         ></textarea>
 
-        {/* File upload area */}
         <label
           htmlFor="resume"
           className="border-4 border-dashed border-indigo-400 rounded-xl p-12 w-full max-w-xl text-center cursor-pointer hover:bg-indigo-50 transition"
@@ -129,7 +128,7 @@ const UploadResume = () => {
         {file && (
           <div className="mt-6 flex items-center gap-4">
             <FaFilePdf className="text-2xl text-red-500" />
-            <span className="font-medium">{file.name}</span>
+            <span className="font-medium break-all text-sm sm:text-base">{file.name}</span>
           </div>
         )}
 
@@ -142,13 +141,12 @@ const UploadResume = () => {
 
         {feedback && (
           <div className="mt-10 w-full max-w-3xl space-y-4">
-            {/* View selector */}
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-4">
-              {['feedback', 'proofreading', 'cover_letter', 'jobs'].map((type) => (
+            <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mb-4">
+              {['feedback', 'proofreading', 'cover_letter'].map((type) => (
                 <button
                   key={type}
                   onClick={() => setView(type)}
-                  className={`px-4 py-2 rounded-lg font-semibold transition ${
+                  className={`px-4 py-2 rounded-lg font-semibold transition text-sm sm:text-base ${
                     view === type
                       ? 'bg-indigo-600 text-white'
                       : 'bg-white border border-indigo-600 text-indigo-600 hover:bg-indigo-50'
@@ -165,7 +163,6 @@ const UploadResume = () => {
                   <h3 className="text-xl font-bold text-indigo-700 flex items-center gap-2">
                     <FaCheckCircle className="text-green-500" /> ATS Score
                   </h3>
-                  {/* ATS Progress Bar */}
                   <div className="w-full">
                     <div className="text-sm font-medium text-gray-600 mb-1">Your resume's ATS compatibility</div>
                     <div className="w-full bg-indigo-100 rounded-full h-5 overflow-hidden mb-2">
@@ -177,7 +174,6 @@ const UploadResume = () => {
                       </div>
                     </div>
                   </div>
-                  {/* AI Feedback */}
                   <div
                     className="text-gray-700 text-sm whitespace-pre-line"
                     dangerouslySetInnerHTML={{ __html: formatText(feedback.ai_feedback) }}
@@ -208,8 +204,6 @@ const UploadResume = () => {
                   ></div>
                 </>
               )}
-
-            
             </div>
           </div>
         )}
