@@ -18,12 +18,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import google.generativeai as genai
+import os
 
 # Downloads for NLTK
 nltk.download("wordnet")
 
 # Load Gemini API key
-genai.configure(api_key="AIzaSyDrM83L7WFPvgtGUB6UmVPAsurYfCTt2jw")  # Replace with your actual API key
+
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+
 
 # Load model and vectorizer
 model = joblib.load("resume_classifier_model.joblib")
