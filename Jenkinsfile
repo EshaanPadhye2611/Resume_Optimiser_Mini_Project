@@ -14,6 +14,13 @@ pipeline {
             }
         }
 
+        stage('Prepare Environment') {
+            steps {
+                echo "📂 Ensuring .env file is accessible..."
+                sh "chmod 644 ${PROJECT_DIR}/.env"
+            }
+        }
+
         stage('Build Docker Images') {
             steps {
                 echo "🐳 Building Docker images for all services..."
