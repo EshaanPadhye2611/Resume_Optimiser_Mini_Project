@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./Backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+
+  python-backend:
+    build:
+      context: ./Backend-Python
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    stdin_open: true
+    tty: true
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
