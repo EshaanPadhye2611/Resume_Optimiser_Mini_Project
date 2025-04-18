@@ -17,7 +17,8 @@ pipeline {
         stage('Prepare Environment') {
             steps {
                 echo "📂 Ensuring .env file is accessible..."
-                sh "chmod 644 ${PROJECT_DIR}/.env"
+                sh "chmod 644 ${PROJECT_DIR}/.env || true"
+                sh "ls -l ${PROJECT_DIR}/.env"
             }
         }
 

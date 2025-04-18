@@ -1,19 +1,19 @@
-version: '3.8'
-env_file:
-  - .env
-
 services:
   backend:
     build:
       context: ./Backend
     ports:
-      - "5000:5000"
-    depends_on:
-      - mongo
+      - "4000:4000"
+    env_file:
+      - .env
 
   python-backend:
     build:
       context: ./Backend-Python
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
 
   frontend:
     build:
